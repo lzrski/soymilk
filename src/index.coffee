@@ -1,34 +1,54 @@
+### 
+
+  # Soymilk
+
+###
+
 eco = require "eco"
 _   = require "underscore"
 
-layout = """
-  <body>
-    <% console.log "layout" %>
-    <% console.dir @ %>
-    <% console.dir arguments %>
-    <h1><%- @title %></h1>
-    <%- do @ %>
-  </body>
-"""
-lfn = eco.compile layout
 
-context = (fn) -> _.extend fn, arguments.callee
+### 
+
+  ## What do we do here:
+
+  We define a function, that - when given an argument of type `function` - will extend that function with properties of it's `this`. That way we can creat a function object that will inherit properties of `context`. We will use that to capture blocks of Eco templates (they are being internally converted to functions) and have all the properties of current context
+
+###
+
+context =
+  capture: (fn) -> _.extend fn, @
+  layouts:
+    # This is a sample layout. Real layouts will be provided by application logic.
+    sample: eco.compile """
+      <body>
+        <% console.log "layout" %>
+        <% console.dir @ %>
+        <% console.dir arguments %>
+        <h1><%- @title %></h1>
+        <%- do @ %>
+      </body>
+    """
+
+
+# This is a sample data. Again - real data will be provided by application logic.
 data =
   title   : "Working Eco layout"
-  user    : 
-    # TODO: plain name would not work - investigate why and warn user if appropriate
-    name    : "Bob"
-  layout  : lfn
+  name    : "Bob"
+
+# Extend context with provided data
 _.extend context, data
+
 
 console.dir context
 
+# Sample template
 template = """
-  <%- @layout @ => %>
+  <%- @layouts.sample @capture => %>
     <% console.log "template" %>
     <% console.dir @ %>
     <% console.dir arguments %>
-    <p>Hello, <%= @user.name %>!</p>
+    <p>Hello, <%= @name %>!</p>
   <% end %>
 """
 tfn = eco.compile template
