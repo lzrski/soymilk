@@ -1,0 +1,15 @@
+{
+  "name": "soymilk",
+  "version": "0.0.0",
+  "description": "Broadway MVC plugin with Eco templates",
+  "main": "lib/index.js",
+  "dependencies": {
+    "eco": "~1.1.0-rc-3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "BSD"
+}
