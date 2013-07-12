@@ -21,12 +21,21 @@ context =
   layouts:
     # This is a sample layout. Real layouts will be provided by application logic.
     sample: eco.compile """
+    <!doctype html>
+    <html>
+      <head>
+        <title><%- @title %></title>
+        <% for sheet in @stylesheets: %>
+          <link rel="stylesheet" type="text/css" href="<%=sheet%>">
+        <% end %>
+      </head>
       <body>
-        <h1><%- @title %></h1>
+        <h1>
         <%- do @ %>
       </body>
     """
     sub: eco.compile """
+      <% @stylesheets.push "sub-layout.css" %>
       <%- @layouts.sample @capture => %>
         <section class="greetings">
           <h2>Bob came</h2>
@@ -37,8 +46,11 @@ context =
 
 # This is a sample data. Again - real data will be provided by application logic.
 data =
-  title   : "Working Eco layout"
-  name    : "Bob"
+  title       : "Working Eco layout"
+  name        : "Bob"
+  stylesheets : [
+    "bobs.css"
+  ]
 
 # Extend context with provided data
 _.extend context, data
