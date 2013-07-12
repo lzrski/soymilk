@@ -12,23 +12,28 @@ layout = """
 """
 lfn = eco.compile layout
 
+context = (fn) -> _.extend fn, arguments.callee
 data =
   title   : "Working Eco layout"
-  name    : "Bob"
+  user    : 
+    # TODO: plain name would not work - investigate why and warn user if appropriate
+    name    : "Bob"
   layout  : lfn
-  rextend : (obj, fn) -> _.extend fn, obj
+_.extend context, data
+
+console.dir context
 
 template = """
-  <%- @layout @rextend @, => %>
+  <%- @layout @ => %>
     <% console.log "template" %>
     <% console.dir @ %>
     <% console.dir arguments %>
-    <p>Hello, <%= @name %>!</p>
+    <p>Hello, <%= @user.name %>!</p>
   <% end %>
 """
 tfn = eco.compile template
 
-html = tfn data
+html = tfn context
 
 
 console.log html
