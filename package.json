@@ -4,7 +4,8 @@
   "description": "Broadway MVC plugin with Eco templates",
   "main": "lib/index.js",
   "dependencies": {
-    "eco": "~1.1.0-rc-3"
+    "eco": "~1.1.0-rc-3",
+    "underscore": "~1.5.1"
   },
   "devDependencies": {},
   "scripts": {
