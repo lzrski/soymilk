@@ -22,14 +22,18 @@ context =
     # This is a sample layout. Real layouts will be provided by application logic.
     sample: eco.compile """
       <body>
-        <% console.log "layout" %>
-        <% console.dir @ %>
-        <% console.dir arguments %>
         <h1><%- @title %></h1>
         <%- do @ %>
       </body>
     """
-
+    sub: eco.compile """
+      <%- @layouts.sample @capture => %>
+        <section class="greetings">
+          <h2>Bob came</h2>
+          <%- do @ %>
+        </section>
+      <% end %>
+    """
 
 # This is a sample data. Again - real data will be provided by application logic.
 data =
@@ -44,16 +48,12 @@ console.dir context
 
 # Sample template
 template = """
-  <%- @layouts.sample @capture => %>
-    <% console.log "template" %>
-    <% console.dir @ %>
-    <% console.dir arguments %>
+  <%- @layouts.sub @capture => %>
     <p>Hello, <%= @name %>!</p>
   <% end %>
 """
 tfn = eco.compile template
 
 html = tfn context
-
 
 console.log html
