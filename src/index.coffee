@@ -4,68 +4,55 @@
 
 ###
 
-eco = require "eco"
-_   = require "underscore"
+eco   = require "eco"
+_     = require "underscore"
+debug = require "debug"
+$     = debug "soymilk"
 
 
-### 
 
-  ## What do we do here:
+templates = {}
+layouts   = {}
+helpers   = {}
 
-  We define a function, that - when given an argument of type `function` - will extend that function with properties of it's `this`. That way we can creat a function object that will inherit properties of `context`. We will use that to capture blocks of Eco templates (they are being internally converted to functions) and have all the properties of current context
+class Soymilk
+  # DRY?
+  registerTemplate: (name, string) -> templates[name] = eco.compile string
+  registerLayout  : (name, string) -> layouts[name]   = eco.compile string
+  registerHelper  : (name, string) -> helpers[name]   = eco.compile string
 
-###
+  ### 
 
-context =
-  capture: (fn) -> _.extend fn, @
-  layouts:
-    # This is a sample layout. Real layouts will be provided by application logic.
-    sample: eco.compile """
-    <!doctype html>
-    <html>
-      <head>
-        <title><%- @title %></title>
-        <% for sheet in @stylesheets: %>
-          <link rel="stylesheet" type="text/css" href="<%=sheet%>">
-        <% end %>
-      </head>
-      <body>
-        <h1>
-        <%- do @ %>
-      </body>
-    """
-    sub: eco.compile """
-      <% @stylesheets.push "sub-layout.css" %>
-      <%- @layouts.sample @capture => %>
-        <section class="greetings">
-          <h2>Bob came</h2>
-          <%- do @ %>
-        </section>
-      <% end %>
-    """
+    ## What do we do here:
 
-# This is a sample data. Again - real data will be provided by application logic.
-data =
-  title       : "Working Eco layout"
-  name        : "Bob"
-  stylesheets : [
-    "bobs.css"
-  ]
+    We define a function, that - when given an argument of type `function` - will extend that function with properties of it's `this`. That way we can creat a `function object that` will inherit properties of `context`. We will use that to capture blocks of Eco templates (they are being internally converted to functions) and have all the properties of current context.
 
-# Extend context with provided data
-_.extend context, data
+  ###
+  bind: (template, data) ->
+    $ "bind %j to %s", data, template
 
+    context = {
+      templates
+      layouts
+      helpers
+      capture: (fn) -> _.extend fn, @
+    }
+      
 
-console.dir context
+    _.extend context, data
 
-# Sample template
-template = """
-  <%- @layouts.sub @capture => %>
-    <p>Hello, <%= @name %>!</p>
-  <% end %>
-"""
-tfn = eco.compile template
+    if typeof template is "string"    then template = templates[template]
+    if typeof template is "function"  then template context
+    else 
+      message =  """
+        Wrong template provided.
 
-html = tfn context
+        First argument to bind should be either a name of registered Eco template or a compiled Eco template.
+      """
+      if (_.keys templates).length
+        message += "\n\nThere are following templates registered:"
+        message += "\n  * #{name}" for name of templates
 
-console.log html
+      throw new Error message
+
+module.exports = Soymilk
