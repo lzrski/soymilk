@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <head>
+    <title><%= @site.title %> | <%= @title %></title>
+  </head>
+  <body>
+    
+    <%- do @helpers.header %>
+    
+    <%- do @ %>
+
+    <footer>&copy; Tadeusz Łazurski 2013</footer>
+  
+  </body>
+</html>

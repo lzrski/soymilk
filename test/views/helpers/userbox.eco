@@ -1,0 +1,4 @@
+<div class="userbox">
+  <h3><%- @name %></h3>
+  <p>Come see as this trully amazing <%- @role %>, as he does spectacular job!</p>
+</div>
